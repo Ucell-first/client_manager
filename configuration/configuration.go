@@ -1,6 +1,7 @@
 package configuration
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -15,23 +16,45 @@ type Config struct {
 }
 
 // Load loads configuration from environment variables.
-func Load() *Config {
+func Load() (*Config, error) {
 	if err := godotenv.Load(".env"); err != nil {
 		log.Printf("error while loading .env file: %v", err)
 	}
 
-	return &Config{
+	config := &Config{
 		Postgres: PostgresConfig{
-			PDB_HOST:     cast.ToString(coalesce("PDB_HOST", "localhost")),
-			PDB_PORT:     cast.ToString(coalesce("PDB_PORT", "5432")),
-			PDB_USER:     cast.ToString(coalesce("PDB_USER", "postgres")),
-			PDB_NAME:     cast.ToString(coalesce("PDB_NAME", "postgres")),
-			PDB_PASSWORD: cast.ToString(coalesce("PDB_PASSWORD", "3333")),
+			Host:     cast.ToString(coalesce("PDB_HOST", "localhost")),
+			Port:     cast.ToString(coalesce("PDB_PORT", "5432")),
+			User:     cast.ToString(coalesce("PDB_USER", "postgres")),
+			Name:     cast.ToString(coalesce("PDB_NAME", "postgres")),
+			Password: cast.ToString(coalesce("PDB_PASSWORD", "3333")),
 		},
 		Server: ServerConfig{
-			USER_ROUTER: cast.ToString(coalesce("USER_ROUTER", ":1234")),
+			Port: cast.ToString(coalesce("SERVER_PORT", ":1234")),
 		},
 	}
+
+	// Konfiguratsiyani validatsiya qilish
+	if err := config.Validate(); err != nil {
+		return nil, fmt.Errorf("failed to validate configuration: %w", err)
+	}
+
+	return config, nil
+}
+
+// Validate validates the entire configuration
+func (c *Config) Validate() error {
+	// PostgreSQL konfiguratsiyasini tekshirish
+	if err := c.Postgres.Validate(); err != nil {
+		return fmt.Errorf("%w: %w: %w", ErrConfiguration, ErrDB, err)
+	}
+
+	// Server konfiguratsiyasini tekshirish
+	if err := c.Server.Validate(); err != nil {
+		return fmt.Errorf("%w: %w: %w", ErrConfiguration, ErrServer, err)
+	}
+
+	return nil
 }
 
 func coalesce(key string, value interface{}) interface{} {

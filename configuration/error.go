@@ -5,7 +5,7 @@ import "errors"
 var (
 	ErrConfiguration    = errors.New("Configuration")
 	ErrValidate         = errors.New("vallidate method")
-	ErrDb               = errors.New("database")
+	ErrDB               = errors.New("database")
 	ErrServer           = errors.New("server")
 	ErrDBHostNotSet     = errors.New("database host is not set")
 	ErrDBPortNotSet     = errors.New("database port is not set")

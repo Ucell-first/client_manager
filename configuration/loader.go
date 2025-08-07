@@ -23,3 +23,17 @@ func LoadFromJson(filepath string) (*Config, error) {
 	}
 	return &config, nil
 }
+
+func (c *Config) SaveToJson(filepath string) error {
+	file, err := os.Create(filepath)
+	if err != nil {
+		return fmt.Errorf("failed to create config file %s: %w", filepath, err)
+	}
+	defer file.Close()
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "  ")
+	if err := encoder.Encode(c); err != nil {
+		return fmt.Errorf("failed to encode config to JSON: %w", err)
+	}
+	return nil
+}
