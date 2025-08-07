@@ -1,5 +1,4 @@
-// Package config provides configuration loading and management
-package config
+package configuration
 
 import (
 	"log"
@@ -13,27 +12,6 @@ import (
 type Config struct {
 	Postgres PostgresConfig
 	Server   ServerConfig
-	Token    TokensConfig
-}
-
-// PostgresConfig holds PostgreSQL database configuration.
-type PostgresConfig struct {
-	PDB_NAME     string
-	PDB_PORT     string
-	PDB_PASSWORD string
-	PDB_USER     string
-	PDB_HOST     string
-}
-
-// ServerConfig holds server-related configuration.
-type ServerConfig struct {
-	USER_ROUTER string
-}
-
-// TokensConfig holds JWT token configuration.
-type TokensConfig struct {
-	ACCES_TOKEN_KEY   string
-	REFRESH_TOKEN_KEY string
 }
 
 // Load loads configuration from environment variables.
@@ -52,10 +30,6 @@ func Load() *Config {
 		},
 		Server: ServerConfig{
 			USER_ROUTER: cast.ToString(coalesce("USER_ROUTER", ":1234")),
-		},
-		Token: TokensConfig{
-			ACCES_TOKEN_KEY:   cast.ToString(coalesce("ACCES_TOKEN_KEY", "your_secret_key1")),
-			REFRESH_TOKEN_KEY: cast.ToString(coalesce("REFRESH_TOKEN_KEY", "your_secret_key2")),
 		},
 	}
 }

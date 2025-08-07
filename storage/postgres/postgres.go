@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/Ucell/client_manager/config"
 	_ "github.com/lib/pq"
+	"honnef.co/go/tools/config"
 )
 
 func ConnectPdb(conf *config.Config) (*sql.DB, error) {
