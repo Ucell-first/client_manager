@@ -1,0 +1,70 @@
+{{define "content"}}
+<div class="card">
+    <header class="card-header">
+        <p class="card-header-title">
+            <i class="fas fa-list"></i> &nbsp; Foydalanuvchilar ro'yxati
+        </p>
+        <div class="card-header-icon">
+            <a href="/user/new" class="button is-primary">
+                <span class="icon">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span>Yangi qo'shish</span>
+            </a>
+        </div>
+    </header>
+    <div class="card-content">
+        {{if .Users}}
+        <div class="table-container">
+            <table class="table is-fullwidth is-striped is-hoverable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>MSISDN</th>
+                        <th>Ism</th>
+                        <th>Holati</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range .Users}}
+                    <tr>
+                        <td>{{.UserID}}</td>
+                        <td><strong>{{.MSISDN}}</strong></td>
+                        <td>{{.Name}}</td>
+                        <td>
+                            {{if .IsActive}}
+                                <span class="tag is-success">Faol</span>
+                            {{else}}
+                                <span class="tag is-danger">Nofaol</span>
+                            {{end}}
+                        </td>
+                        <td>
+                            <div class="buttons are-small">
+                                <a href="/user/view?id={{.UserID}}" class="button is-info is-light">
+                                    <i class="fas fa-eye"></i> Ko'rish
+                                </a>
+                                <a href="/user/edit?id={{.UserID}}" class="button is-warning is-light">
+                                    <i class="fas fa-edit"></i> Tahrirlash
+                                </a>
+                                <a href="/user/delete?id={{.UserID}}"
+                                   class="button is-danger is-light"
+                                   onclick="return confirm('Haqiqatan ham o\'chirmoqchimisiz?')">
+                                    <i class="fas fa-trash"></i> O'chirish
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+        {{else}}
+        <div class="notification is-info">
+            <i class="fas fa-info-circle"></i> Hozircha foydalanuvchilar yo'q.
+            <a href="/user/new">Birinchi foydalanuvchini qo'shing</a>
+        </div>
+        {{end}}
+    </div>
+</div>
+{{end}}

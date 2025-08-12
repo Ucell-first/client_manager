@@ -1,0 +1,61 @@
+{{define "content"}}
+<div class="card">
+    <header class="card-header">
+        <p class="card-header-title">
+            <i class="fas fa-user-plus"></i> &nbsp; Yangi foydalanuvchi qo'shish
+        </p>
+        <div class="card-header-icon">
+            <a href="/users" class="button is-light">
+                <i class="fas fa-arrow-left"></i> Orqaga
+            </a>
+        </div>
+    </header>
+    <div class="card-content">
+        <form method="POST" action="/user/create">
+            <div class="field">
+                <label class="label">MSISDN *</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="tel" name="msisdn" placeholder="+998901234567" required>
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-phone"></i>
+                    </span>
+                </div>
+                <p class="help">Telefon raqamni to'liq kiriting (+998 bilan)</p>
+            </div>
+
+            <div class="field">
+                <label class="label">Ism *</label>
+                <div class="control has-icons-left">
+                    <input class="input" type="text" name="name" placeholder="Foydalanuvchi ismi" required>
+                    <span class="icon is-small is-left">
+                        <i class="fas fa-user"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <label class="checkbox">
+                        <input type="checkbox" name="is_active" value="true" checked>
+                        Faol foydalanuvchi
+                    </label>
+                </div>
+                <p class="help">Belgilangan bo'lsa foydalanuvchi faol bo'ladi</p>
+            </div>
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <button type="submit" class="button is-primary">
+                        <i class="fas fa-save"></i> Saqlash
+                    </button>
+                </div>
+                <div class="control">
+                    <a href="/users" class="button is-light">
+                        <i class="fas fa-times"></i> Bekor qilish
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{{end}}

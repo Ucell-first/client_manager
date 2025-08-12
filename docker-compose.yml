@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: client_manager_db
+    environment:
+      POSTGRES_DB: client_manager
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345678
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d
+    networks:
+      - client_manager_network
+
+  app:
+    build: .
+    container_name: client_manager_app
+    environment:
+      PDB_HOST: postgres
+      PDB_PORT: 5432
+      PDB_NAME: client_manager
+      PDB_USER: postgres
+      PDB_PASSWORD: 12345678
+      SERVER_PORT: :8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - client_manager_network
+
+volumes:
+  postgres_data:
+
+networks:
+  client_manager_network:
+    driver: bridge

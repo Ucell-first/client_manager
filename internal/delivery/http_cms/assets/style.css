@@ -1,0 +1,32 @@
+.table th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+}
+
+.hero {
+    background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+}
+
+.card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+.button.is-primary {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+.button.is-primary:hover {
+    background-color: #5a6fd8;
+    border-color: #5a6fd8;
+}
+
+.notification {
+    border-radius: 6px;
+}
+
+.breadcrumb {
+    padding: 1rem 0;
+    background-color: #fafafa;
+}
