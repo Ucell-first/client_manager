@@ -1,41 +1,55 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  postgres:
-    image: postgres:13
-    container_name: client_manager_db
+  postgres-db:
+    container_name: postgres
+    image: postgres
     environment:
-      POSTGRES_DB: client_manager
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12345678
+      - POSTGRES_USER=${PDB_USER}
+      - POSTGRES_PASSWORD=${PDB_PASSWORD}
+      - POSTGRES_DB=${PDB_NAME}
+      - POSTGRES_PORT=${PDB_PORT}
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./migrations:/docker-entrypoint-initdb.d
+      - db:/var/lib/postgresql/data
     networks:
       - client_manager_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PDB_USER} -d ${PDB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  app:
+
+  migrate:
+    image: migrate/migrate
+    networks:
+      - client_manager_network
+    volumes:
+      - ./migrations:/migrations
+    depends_on:
+      - postgres-db
+    command: ["-path", "/migrations", "-database" ,"postgres://${PDB_USER}:${PDB_PASSWORD}@postgres:${PDB_PORT}/${PDB_NAME}?sslmode=disable","up"]
+
+  userservice:
+    container_name: auth
     build: .
-    container_name: client_manager_app
-    environment:
-      PDB_HOST: postgres
-      PDB_PORT: 5432
-      PDB_NAME: client_manager
-      PDB_USER: postgres
-      PDB_PASSWORD: 12345678
-      SERVER_PORT: :8080
     ports:
       - "8080:8080"
-    depends_on:
-      - postgres
     networks:
       - client_manager_network
-
-volumes:
-  postgres_data:
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
 networks:
   client_manager_network:
-    driver: bridge
+    external: true
+
+
+volumes:
+  db:
+    driver: local
