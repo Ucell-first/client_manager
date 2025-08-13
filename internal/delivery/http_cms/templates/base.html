@@ -51,7 +51,294 @@
 
     <section class="section">
         <div class="container">
-            {{template "content" .}}
+            <!-- Users list content -->
+            {{if eq .Title "Foydalanuvchilar ro'yxati"}}
+            <div class="card">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        <i class="fas fa-list"></i> &nbsp; Foydalanuvchilar ro'yxati
+                    </p>
+                    <div class="card-header-icon">
+                        <a href="/user/new" class="button is-primary">
+                            <span class="icon">
+                                <i class="fas fa-plus"></i>
+                            </span>
+                            <span>Yangi qo'shish</span>
+                        </a>
+                    </div>
+                </header>
+                <div class="card-content">
+                    {{if .Users}}
+                    <div class="table-container">
+                        <table class="table is-fullwidth is-striped is-hoverable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>MSISDN</th>
+                                    <th>Ism</th>
+                                    <th>Holati</th>
+                                    <th>Amallar</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{range .Users}}
+                                <tr>
+                                    <td>{{.UserID}}</td>
+                                    <td><strong>{{.MSISDN}}</strong></td>
+                                    <td>{{.Name}}</td>
+                                    <td>
+                                        {{if .IsActive}}
+                                            <span class="tag is-success">Faol</span>
+                                        {{else}}
+                                            <span class="tag is-danger">Nofaol</span>
+                                        {{end}}
+                                    </td>
+                                    <td>
+                                        <div class="buttons are-small">
+                                            <a href="/user/view?id={{.UserID}}" class="button is-info is-light">
+                                                <i class="fas fa-eye"></i> Ko'rish
+                                            </a>
+                                            <a href="/user/edit?id={{.UserID}}" class="button is-warning is-light">
+                                                <i class="fas fa-edit"></i> Tahrirlash
+                                            </a>
+                                            <a href="/user/delete?id={{.UserID}}"
+                                               class="button is-danger is-light"
+                                               onclick="return confirm('Haqiqatan ham o\'chirmoqchimisiz?')">
+                                                <i class="fas fa-trash"></i> O'chirish
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{else}}
+                    <div class="notification is-info">
+                        <i class="fas fa-info-circle"></i> Hozircha foydalanuvchilar yo'q.
+                        <a href="/user/new">Birinchi foydalanuvchini qo'shing</a>
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+
+            <!-- User view content -->
+            {{if eq .Title "Foydalanuvchi ma'lumotlari"}}
+            <div class="card">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        <i class="fas fa-user"></i> &nbsp; Foydalanuvchi ma'lumotlari
+                    </p>
+                    <div class="card-header-icon">
+                        <a href="/users" class="button is-light">
+                            <i class="fas fa-arrow-left"></i> Orqaga
+                        </a>
+                    </div>
+                </header>
+                <div class="card-content">
+                    {{if .User}}
+                    <div class="columns">
+                        <div class="column is-8">
+                            <table class="table is-fullwidth">
+                                <tbody>
+                                    <tr>
+                                        <td><strong>ID:</strong></td>
+                                        <td>{{.User.UserID}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>MSISDN:</strong></td>
+                                        <td><code>{{.User.MSISDN}}</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Ism:</strong></td>
+                                        <td>{{.User.Name}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Holati:</strong></td>
+                                        <td>
+                                            {{if .User.IsActive}}
+                                                <span class="tag is-success is-large">
+                                                    <i class="fas fa-check-circle"></i> &nbsp; Faol
+                                                </span>
+                                            {{else}}
+                                                <span class="tag is-danger is-large">
+                                                    <i class="fas fa-times-circle"></i> &nbsp; Nofaol
+                                                </span>
+                                            {{end}}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        <a href="/user/edit?id={{.User.UserID}}" class="button is-warning">
+                            <i class="fas fa-edit"></i> Tahrirlash
+                        </a>
+                        <a href="/user/delete?id={{.User.UserID}}"
+                           class="button is-danger"
+                           onclick="return confirm('Haqiqatan ham o\'chirmoqchimisiz?')">
+                            <i class="fas fa-trash"></i> O'chirish
+                        </a>
+                        <a href="/users" class="button is-light">
+                            <i class="fas fa-list"></i> Ro'yxatga qaytish
+                        </a>
+                    </div>
+                    {{else}}
+                    <div class="notification is-warning">
+                        <i class="fas fa-exclamation-triangle"></i> Foydalanuvchi topilmadi
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+
+            <!-- New user form -->
+            {{if eq .Title "Yangi foydalanuvchi qo'shish"}}
+            <div class="card">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        <i class="fas fa-user-plus"></i> &nbsp; Yangi foydalanuvchi qo'shish
+                    </p>
+                    <div class="card-header-icon">
+                        <a href="/users" class="button is-light">
+                            <i class="fas fa-arrow-left"></i> Orqaga
+                        </a>
+                    </div>
+                </header>
+                <div class="card-content">
+                    <form method="POST" action="/user/create">
+                        <div class="field">
+                            <label class="label">MSISDN *</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="tel" name="msisdn" placeholder="+998901234567" required>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-phone"></i>
+                                </span>
+                            </div>
+                            <p class="help">Telefon raqamni to'liq kiriting (+998 bilan)</p>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Ism *</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="text" name="name" placeholder="Foydalanuvchi ismi" required>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="control">
+                                <label class="checkbox">
+                                    <input type="checkbox" name="is_active" value="true" checked>
+                                    Faol foydalanuvchi
+                                </label>
+                            </div>
+                            <p class="help">Belgilangan bo'lsa foydalanuvchi faol bo'ladi</p>
+                        </div>
+
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button type="submit" class="button is-primary">
+                                    <i class="fas fa-save"></i> Saqlash
+                                </button>
+                            </div>
+                            <div class="control">
+                                <a href="/users" class="button is-light">
+                                    <i class="fas fa-times"></i> Bekor qilish
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            {{end}}
+
+            <!-- Edit user form -->
+            {{if eq .Title "Foydalanuvchini tahrirlash"}}
+            <div class="card">
+                <header class="card-header">
+                    <p class="card-header-title">
+                        <i class="fas fa-user-edit"></i> &nbsp; Foydalanuvchini tahrirlash
+                    </p>
+                    <div class="card-header-icon">
+                        <a href="/users" class="button is-light">
+                            <i class="fas fa-arrow-left"></i> Orqaga
+                        </a>
+                    </div>
+                </header>
+                <div class="card-content">
+                    {{if .User}}
+                    <form method="POST" action="/user/update">
+                        <input type="hidden" name="user_id" value="{{.User.UserID}}">
+
+                        <div class="field">
+                            <label class="label">User ID</label>
+                            <div class="control">
+                                <input class="input" type="text" value="{{.User.UserID}}" disabled>
+                            </div>
+                            <p class="help">ID o'zgartirilmaydi</p>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">MSISDN *</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="tel" name="msisdn" value="{{.User.MSISDN}}" required>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-phone"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label class="label">Ism *</label>
+                            <div class="control has-icons-left">
+                                <input class="input" type="text" name="name" value="{{.User.Name}}" required>
+                                <span class="icon is-small is-left">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <div class="control">
+                                <label class="checkbox">
+                                    <input type="checkbox" name="is_active" value="true" {{if .User.IsActive}}checked{{end}}>
+                                    Faol foydalanuvchi
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button type="submit" class="button is-warning">
+                                    <i class="fas fa-save"></i> Yangilash
+                                </button>
+                            </div>
+                            <div class="control">
+                                <a href="/user/view?id={{.User.UserID}}" class="button is-info">
+                                    <i class="fas fa-eye"></i> Ko'rish
+                                </a>
+                            </div>
+                            <div class="control">
+                                <a href="/users" class="button is-light">
+                                    <i class="fas fa-times"></i> Bekor qilish
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                    {{else}}
+                    <div class="notification is-warning">
+                        <i class="fas fa-exclamation-triangle"></i> Foydalanuvchi topilmadi
+                    </div>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
         </div>
     </section>
 

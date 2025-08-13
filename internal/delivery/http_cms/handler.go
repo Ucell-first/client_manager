@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"path/filepath"
 
 	"github.com/Ucell/client_manager/storage"
 )
@@ -14,13 +15,25 @@ type Handler struct {
 }
 
 func NewHandler(storage storage.IStorage) *Handler {
-	// Template fayllarini to'g'ri load qilish
-	tmpl, err := template.ParseGlob("internal/delivery/http_cms/templates/*.html")
+	// Template fayl yo'lini tekshirish
+	templatesPath := "internal/delivery/http_cms/templates/*.html"
+	files, err := filepath.Glob(templatesPath)
 	if err != nil {
-		log.Printf("Template load xatoligi: %v", err)
-		// Agar template topilmasa, oddiy template yaratamiz
-		tmpl = template.New("default")
+		log.Fatalf("Template fayllarini izlashda xatolik: %v", err)
 	}
+
+	log.Printf("Topilgan template fayllar: %v", files)
+
+	if len(files) == 0 {
+		log.Fatal("Template fayllar topilmadi!")
+	}
+
+	tmpl, err := template.ParseGlob(templatesPath)
+	if err != nil {
+		log.Fatalf("Template fayllarini yuklashda xatolik: %v", err)
+	}
+
+	log.Println("Template fayllar muvaffaqiyatli yuklandi")
 
 	return &Handler{
 		storage: storage,
@@ -36,8 +49,14 @@ func (h *Handler) Routes() *http.ServeMux {
 	mux.Handle("/assets/", http.StripPrefix("/assets/", fs))
 
 	// User routes
-	mux.HandleFunc("/", h.listUsers)
-	mux.HandleFunc("/users", h.listUsers)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Root route called: %s", r.URL.Path)
+		h.listUsers(w, r)
+	})
+	mux.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Users route called: %s", r.URL.Path)
+		h.listUsers(w, r)
+	})
 	mux.HandleFunc("/user/view", h.viewUser)
 	mux.HandleFunc("/user/new", h.newUserForm)
 	mux.HandleFunc("/user/create", h.createUser)
@@ -45,5 +64,6 @@ func (h *Handler) Routes() *http.ServeMux {
 	mux.HandleFunc("/user/update", h.updateUser)
 	mux.HandleFunc("/user/delete", h.deleteUser)
 
+	log.Println("Routes configured successfully")
 	return mux
 }
