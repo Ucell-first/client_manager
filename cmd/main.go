@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -18,7 +17,6 @@ import (
 
 func main() {
 	// Konfiguratsiyani yuklash
-	fmt.Print("boshlandi")
 	cfg, err := configuration.Load()
 	if err != nil {
 		log.Fatalf("Konfiguratsiya yuklashda xatolik: %v", err)

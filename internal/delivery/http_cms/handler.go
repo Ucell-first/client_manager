@@ -22,8 +22,6 @@ func NewHandler(storage storage.IStorage) *Handler {
 		log.Fatalf("Template fayllarini izlashda xatolik: %v", err)
 	}
 
-	log.Printf("Topilgan template fayllar: %v", files)
-
 	if len(files) == 0 {
 		log.Fatal("Template fayllar topilmadi!")
 	}
