@@ -16,13 +16,10 @@ import (
 )
 
 func main() {
-	// Konfiguratsiyani yuklash
 	cfg, err := configuration.Load()
 	if err != nil {
 		log.Fatalf("Konfiguratsiya yuklashda xatolik: %v", err)
 	}
-
-	// PostgreSQL ga ulanish
 	db, err := postgres.ConnectPdb(&cfg.Postgres)
 	if err != nil {
 		log.Fatalf("Bazaga ulashda xatolik: %v", err)
@@ -32,20 +29,15 @@ func main() {
 			log.Printf("Bazani yopishda xatolik: %v", err)
 		}
 	}()
-
-	// Storage yaratish
 	store := storage.NewStorage(db)
 
-	// HTTP CMS handlerlarini yaratish
 	handler := httpcms.NewHandler(store)
 
-	// Server yaratish
 	server := &http.Server{
 		Addr:    cfg.Server.GetAddress(),
 		Handler: handler.Routes(),
 	}
 
-	// Graceful shutdown
 	go func() {
 		log.Printf("Server %s portida ishlamoqda", cfg.Server.GetAddress())
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
