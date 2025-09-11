@@ -7,6 +7,12 @@ CREATE TABLE IF NOT EXISTS users (
     is_active BOOLEAN NOT NULL DEFAULT TRUE
 );
 
+CREATE TABLE IF NOT EXISTS admins(
+    id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    login           VARCHAR(30) NOT NULL,
+    hashed_password VARCHAR(50) NOT NULL,
+)
+
 -- Test uchun 10 ta user qo'shamiz
 INSERT INTO users (msisdn, name, is_active) VALUES
 ('+998901112233', 'Ali Valiyev', TRUE),
@@ -19,3 +25,8 @@ INSERT INTO users (msisdn, name, is_active) VALUES
 ('+998901112240', 'Javohir Islomov', TRUE),
 ('+998901112241', 'Nigora Abduqodirova', TRUE),
 ('+998901112242', 'Sherzod Mamatov', TRUE);
+
+
+INSERT INTO admins (login, hashed_password) VALUES
+('admin','admin'),
+('test','1234');
