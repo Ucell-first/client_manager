@@ -1,4 +1,5 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE IF NOT EXISTS users (
     user_id   UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -28,5 +29,5 @@ INSERT INTO users (msisdn, name, is_active) VALUES
 
 
 INSERT INTO admins (login, hashed_password) VALUES
-('admin','admin'),
-('test','1234');
+('admin', crypt('admin', gen_salt('bf'))),
+('test',  crypt('1234', gen_salt('bf')));
