@@ -16,3 +16,6 @@ type IUserStorage interface {
 	Update(ctx context.Context, user *User) error
 	Delete(ctx context.Context, id string) error
 }
+
+type IAdminStorage interface {
+}

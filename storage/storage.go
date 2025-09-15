@@ -9,6 +9,7 @@ import (
 
 type IStorage interface {
 	User() repo.IUserStorage
+	Admin() repo.IAdminStorage
 	ClosePDB() error
 }
 
@@ -33,3 +34,5 @@ func (p *databaseStorage) ClosePDB() error {
 func (p *databaseStorage) User() repo.IUserStorage {
 	return postgres.NewUserRepository(p.pdb)
 }
+
+func (p *databaseStorage) Admin() repo.IAdminStorage { return postgres.NewAdminRepository(p.pdb) }
