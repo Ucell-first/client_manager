@@ -13,6 +13,7 @@ import (
 type Config struct {
 	Postgres PostgresConfig
 	Server   ServerConfig
+	Token    TokenConfig
 }
 
 // Load loads configuration from environment variables.
@@ -31,6 +32,9 @@ func Load() (*Config, error) {
 		},
 		Server: ServerConfig{
 			Port: cast.ToString(coalesce("SERVER_PORT", ":1234")),
+		},
+		Token: TokenConfig{
+			TOKEN: cast.ToString(coalesce("TOKEN_KEY", "sdtftgfygxdftuythfc")),
 		},
 	}
 
@@ -54,6 +58,9 @@ func (c *Config) Validate() error {
 		return fmt.Errorf("%w: %w: %w", ErrConfiguration, ErrServer, err)
 	}
 
+	if err := c.Token.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 

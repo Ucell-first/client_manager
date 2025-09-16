@@ -13,4 +13,5 @@ var (
 	ErrDBNameNotSet     = errors.New("database name is not set")
 	ErrDBPasswordNotSet = errors.New("database password is not set")
 	ErrServerPortNotSet = errors.New("server port is not set")
+	ErrTokenNotSet      = errors.New("token is not set")
 )
