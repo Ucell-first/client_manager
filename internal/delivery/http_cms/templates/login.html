@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Client Manager</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.4/css/bulma.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .login-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .login-box {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+<section class="hero is-fullheight login-container">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-4">
+                    <div class="box login-box">
+                        <div class="has-text-centered mb-6">
+                            <h1 class="title is-3 has-text-primary">
+                                <i class="fas fa-shield-alt"></i> Admin Login
+                            </h1>
+                            <p class="subtitle">Client Manager tizimiga kirish</p>
+                        </div>
+
+                        {{if .Error}}
+                        <div class="notification is-danger">
+                            <i class="fas fa-exclamation-triangle"></i> {{.Error}}
+                        </div>
+                        {{end}}
+
+                        <form method="POST" action="/auth">
+                            <div class="field">
+                                <label class="label">Login</label>
+                                <div class="control has-icons-left">
+                                    <input class="input is-medium" type="text" name="login" placeholder="Login kiriting" required>
+                                    <span class="icon is-small is-left">
+                                            <i class="fas fa-user"></i>
+                                        </span>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label class="label">Parol</label>
+                                <div class="control has-icons-left">
+                                    <input class="input is-medium" type="password" name="password" placeholder="Parolni kiriting" required>
+                                    <span class="icon is-small is-left">
+                                            <i class="fas fa-lock"></i>
+                                        </span>
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <div class="control">
+                                    <button type="submit" class="button is-primary is-medium is-fullwidth">
+                                        <i class="fas fa-sign-in-alt"></i>&nbsp; Kirish
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+
+                        <div class="has-text-centered mt-4">
+                            <p class="is-size-7 has-text-grey">
+                                Test: admin/admin yoki test/1234
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

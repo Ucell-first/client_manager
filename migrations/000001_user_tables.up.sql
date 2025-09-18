@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS admins(
     id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     login           VARCHAR(30) NOT NULL,
-    hashed_password VARCHAR(50) NOT NULL,
-)
+    hashed_password VARCHAR(255) NOT NULL
+);
 
 -- Test uchun 10 ta user qo'shamiz
 INSERT INTO users (msisdn, name, is_active) VALUES

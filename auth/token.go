@@ -19,7 +19,7 @@ func GenerateJWTToken(id, role string) (string, error) {
 	claims["user_id"] = id
 	claims["role"] = role
 	claims["iat"] = time.Now().Unix()
-	claims["exp"] = time.Now().AddDate(0, 6, 0).Unix()
+	claims["exp"] = time.Now().Add(30 * time.Minute).Unix()
 
 	newToken, err := token.SignedString([]byte(conf.Token.TOKEN))
 	if err != nil {

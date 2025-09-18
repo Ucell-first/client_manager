@@ -20,6 +20,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Konfiguratsiya yuklashda xatolik: %v", err)
 	}
+
 	db, err := postgres.ConnectPdb(&cfg.Postgres)
 	if err != nil {
 		log.Fatalf("Bazaga ulashda xatolik: %v", err)
@@ -29,8 +30,8 @@ func main() {
 			log.Printf("Bazani yopishda xatolik: %v", err)
 		}
 	}()
-	store := storage.NewStorage(db)
 
+	store := storage.NewStorage(db)
 	handler := httpcms.NewHandler(store)
 
 	server := &http.Server{
@@ -40,6 +41,7 @@ func main() {
 
 	go func() {
 		log.Printf("Server %s portida ishlamoqda", cfg.Server.GetAddress())
+		log.Println("Login uchun: admin/admin yoki test/1234")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Server ishga tushirishda xatolik: %v", err)
 		}

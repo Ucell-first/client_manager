@@ -1,0 +1,7 @@
+p, admin, /users, GET
+p, admin, /user/view, GET
+p, admin, /user/new, GET
+p, admin, /user/create, POST
+p, admin, /user/edit, GET
+p, admin, /user/update, POST
+p, admin, /user/delete, GET

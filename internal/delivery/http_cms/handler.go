@@ -6,16 +6,17 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/Ucell/client_manager/middleware"
 	"github.com/Ucell/client_manager/storage"
 )
 
 type Handler struct {
 	storage storage.IStorage
 	tmpl    *template.Template
+	auth    *middleware.AuthMiddleware
 }
 
 func NewHandler(storage storage.IStorage) *Handler {
-	// Template fayl yo'lini tekshirish
 	templatesPath := "internal/delivery/http_cms/templates/*.html"
 	files, err := filepath.Glob(templatesPath)
 	if err != nil {
@@ -31,11 +32,14 @@ func NewHandler(storage storage.IStorage) *Handler {
 		log.Fatalf("Template fayllarini yuklashda xatolik: %v", err)
 	}
 
-	log.Println("Template fayllar muvaffaqiyatli yuklandi")
+	auth := middleware.NewAuthMiddleware()
+
+	log.Println("Template fayllar va middleware muvaffaqiyatli yuklandi")
 
 	return &Handler{
 		storage: storage,
 		tmpl:    tmpl,
+		auth:    auth,
 	}
 }
 
@@ -46,22 +50,30 @@ func (h *Handler) Routes() *http.ServeMux {
 	fs := http.FileServer(http.Dir("internal/delivery/http_cms/assets/"))
 	mux.Handle("/assets/", http.StripPrefix("/assets/", fs))
 
-	// User routes
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Root route called: %s", r.URL.Path)
-		h.listUsers(w, r)
-	})
-	mux.HandleFunc("/users", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("Users route called: %s", r.URL.Path)
-		h.listUsers(w, r)
-	})
-	mux.HandleFunc("/user/view", h.viewUser)
-	mux.HandleFunc("/user/new", h.newUserForm)
-	mux.HandleFunc("/user/create", h.createUser)
-	mux.HandleFunc("/user/edit", h.editUserForm)
-	mux.HandleFunc("/user/update", h.updateUser)
-	mux.HandleFunc("/user/delete", h.deleteUser)
+	// Auth routes (middlewaresiz)
+	mux.HandleFunc("/login", h.loginForm)
+	mux.HandleFunc("/auth", h.loginAuth)
 
-	log.Println("Routes configured successfully")
+	// Barcha boshqa route'lar middleware orqali
+	protectedMux := http.NewServeMux()
+
+	// User routes
+	protectedMux.HandleFunc("/", h.listUsers)
+	protectedMux.HandleFunc("/users", h.listUsers)
+	protectedMux.HandleFunc("/user/view", h.viewUser)
+	protectedMux.HandleFunc("/user/new", h.newUserForm)
+	protectedMux.HandleFunc("/user/create", h.createUser)
+	protectedMux.HandleFunc("/user/edit", h.editUserForm)
+	protectedMux.HandleFunc("/user/update", h.updateUser)
+	protectedMux.HandleFunc("/user/delete", h.deleteUser)
+	protectedMux.HandleFunc("/logout", h.logout)
+
+	// Protected routes ni auth middleware bilan o'rash
+	mux.Handle("/users", h.auth.RequireAuth(protectedMux))
+	mux.Handle("/user/", h.auth.RequireAuth(protectedMux))
+	mux.Handle("/logout", h.auth.RequireAuth(protectedMux))
+	mux.Handle("/", h.auth.RequireAuth(protectedMux))
+
+	log.Println("Routes muvaffaqiyatli sozlandi")
 	return mux
 }

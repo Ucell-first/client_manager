@@ -8,7 +8,6 @@ services:
       - POSTGRES_USER=${PDB_USER}
       - POSTGRES_PASSWORD=${PDB_PASSWORD}
       - POSTGRES_DB=${PDB_NAME}
-      - POSTGRES_PORT=${PDB_PORT}
     ports:
       - "5434:5432"
     volumes:
@@ -17,10 +16,10 @@ services:
       - client_manager_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${PDB_USER} -d ${PDB_NAME}"]
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 5
-
+      retries: 10
+      start_period: 10s
 
   migrate:
     image: migrate/migrate
@@ -29,8 +28,9 @@ services:
     volumes:
       - ./migrations:/migrations
     depends_on:
-      - postgres-db
-    command: ["-path", "/migrations", "-database" ,"postgres://${PDB_USER}:${PDB_PASSWORD}@postgres:${PDB_PORT}/${PDB_NAME}?sslmode=disable","up"]
+      postgres-db:
+        condition: service_healthy
+    command: ["-path", "/migrations", "-database", "postgres://${PDB_USER}:${PDB_PASSWORD}@postgres-db:5432/${PDB_NAME}?sslmode=disable", "up"]
 
   userservice:
     container_name: auth
@@ -48,7 +48,6 @@ services:
 networks:
   client_manager_network:
     external: true
-
 
 volumes:
   db:

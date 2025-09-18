@@ -16,6 +16,7 @@ WORKDIR /app
 COPY --from=builder /app/myapp .
 COPY --from=builder /app/internal/delivery/http_cms/templates ./internal/delivery/http_cms/templates
 COPY --from=builder /app/internal/delivery/http_cms/assets ./internal/delivery/http_cms/assets
+COPY --from=builder /app/casbin ./casbin
 COPY --from=builder /app/.env .
 
 EXPOSE 8080
